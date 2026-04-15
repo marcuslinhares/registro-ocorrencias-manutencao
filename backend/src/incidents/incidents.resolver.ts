@@ -15,7 +15,9 @@ export class IncidentsResolver {
   }
 
   @Query(() => [Incident], { name: 'lastIncidents' })
-  async findAll(@Args('limit', { type: () => Int, defaultValue: 5 }) limit: number) {
+  async findAll(
+    @Args('limit', { type: () => Int, defaultValue: 5 }) limit: number,
+  ) {
     return this.incidentsService.findAll(limit);
   }
 }
