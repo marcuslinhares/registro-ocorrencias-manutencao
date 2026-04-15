@@ -2,6 +2,7 @@
 
 import { ApolloProvider } from '@apollo/client';
 import { client } from '@/lib/apollo-client';
+import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 
 export default function RootLayout({
@@ -14,6 +15,7 @@ export default function RootLayout({
       <body>
         <ApolloProvider client={client}>
           {children}
+          <Toaster />
         </ApolloProvider>
       </body>
     </html>
