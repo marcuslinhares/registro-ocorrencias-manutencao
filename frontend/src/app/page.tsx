@@ -1,10 +1,27 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { IncidentTable } from '@/components/incidents/IncidentTable';
 import { NewIncidentModal } from '@/components/incidents/NewIncidentModal';
 import { Toaster } from '@/components/ui/toaster';
 
 export default function Home() {
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<string | undefined>(undefined);
+
+  // Debounce search input to avoid too many requests
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const toggleTypeFilter = (type: string) => {
+    setTypeFilter(typeFilter === type ? undefined : type);
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       <div className="mx-auto max-w-6xl space-y-8">
@@ -19,6 +36,8 @@ export default function Home() {
               <input
                 type="text"
                 placeholder="Buscar por equipamento, código ou motivo..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#413129]"
               />
               <div className="absolute left-3 top-2.5 text-gray-400">
@@ -39,13 +58,43 @@ export default function Home() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">Preventiva</button>
-              <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">Corretiva</button>
-              <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">Planejada</button>
+              <button
+                onClick={() => toggleTypeFilter('Preventiva')}
+                className={`px-4 py-2 border rounded-md transition-colors ${
+                  typeFilter === 'Preventiva'
+                    ? 'bg-[#4B5563] text-white border-[#4B5563]'
+                    : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                Preventiva
+              </button>
+              <button
+                onClick={() => toggleTypeFilter('Corretiva')}
+                className={`px-4 py-2 border rounded-md transition-colors ${
+                  typeFilter === 'Corretiva'
+                    ? 'bg-[#EF4444] text-white border-[#EF4444]'
+                    : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                Corretiva
+              </button>
+              <button
+                onClick={() => toggleTypeFilter('Planejada')}
+                className={`px-4 py-2 border rounded-md transition-colors ${
+                  typeFilter === 'Planejada'
+                    ? 'bg-[#3B82F6] text-white border-[#3B82F6]'
+                    : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                Planejada
+              </button>
             </div>
           </div>
           
-          <IncidentTable />
+          <IncidentTable 
+            typeOfOccurrence={typeFilter} 
+            search={debouncedSearch} 
+          />
         </div>
       </div>
       <Toaster />

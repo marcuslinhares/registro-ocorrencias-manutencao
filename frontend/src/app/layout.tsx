@@ -1,9 +1,11 @@
-'use client';
-
-import { ApolloProvider } from '@apollo/client';
-import { client } from '@/lib/apollo-client';
+import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
+
+export const metadata = {
+  title: 'Registro de Ocorrências',
+  description: 'Sistema de manutenção industrial',
+};
 
 export default function RootLayout({
   children,
@@ -11,12 +13,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body>
-        <ApolloProvider client={client}>
+        <Providers>
           {children}
           <Toaster />
-        </ApolloProvider>
+        </Providers>
       </body>
     </html>
   );

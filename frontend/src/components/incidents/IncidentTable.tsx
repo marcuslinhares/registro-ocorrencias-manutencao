@@ -13,9 +13,9 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-const LAST_INCIDENTS = gql`
-  query LastIncidents($limit: Int) {
-    lastIncidents(limit: $limit) {
+export const LAST_INCIDENTS = gql`
+  query LastIncidents($limit: Int, $typeOfOccurrence: String, $search: String) {
+    lastIncidents(limit: $limit, typeOfOccurrence: $typeOfOccurrence, search: $search) {
       id
       machineName
       typeOfOccurrence
@@ -35,9 +35,18 @@ interface Incident {
   createdAt: string;
 }
 
-export function IncidentTable() {
+interface IncidentTableProps {
+  typeOfOccurrence?: string;
+  search?: string;
+}
+
+export function IncidentTable({ typeOfOccurrence, search }: IncidentTableProps) {
   const { data, loading, error } = useQuery(LAST_INCIDENTS, {
-    variables: { limit: 10 },
+    variables: { 
+      limit: 10,
+      typeOfOccurrence: typeOfOccurrence || undefined,
+      search: search || undefined
+    },
     fetchPolicy: 'cache-and-network',
   });
 
@@ -75,7 +84,7 @@ export function IncidentTable() {
           {incidents.length === 0 ? (
             <TableRow>
               <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                Nenhuma ocorrência registrada.
+                Nenhuma ocorrência encontrada.
               </TableCell>
             </TableRow>
           ) : (
