@@ -201,11 +201,10 @@ export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTabl
                   <TableCell className="text-center">
                     <div className="flex justify-center gap-2">
                       <IncidentModal incident={incident}>
-                        <button className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-orange-500 transition-colors">
+                        <button className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-orange-500 transition-colors cursor-pointer">
                           <Pencil className="h-3.5 w-3.5" />
                         </button>
                       </IncidentModal>
-
                       <Dialog open={deleteId === incident.id} onOpenChange={(open) => setDeleteId(open ? incident.id : null)}>
                         <DialogTrigger>
                           <div className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-red-500 transition-colors cursor-pointer">
