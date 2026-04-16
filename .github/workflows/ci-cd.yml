@@ -21,8 +21,6 @@ env:
   REGISTRY: ghcr.io
   BACKEND_IMAGE: ghcr.io/${{ github.repository }}/backend
   FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/frontend
-  # MongoDB for tests in CI
-  MONGODB_TEST_URL: mongodb://localhost:27017/test-db?directConnection=true
 
 jobs:
   # ──────────────────────────────────────────
@@ -124,8 +122,10 @@ jobs:
           npm ci
           npx prisma generate
           npm run build
-          PORT=4000 npm run start:prod &
-          npx wait-on http://localhost:4000/graphql --timeout 60000
+          # Pass env vars directly and start in background
+          DATABASE_URL=mongodb://localhost:27017/test-db?directConnection=true PORT=4000 npm run start:prod &
+          # Wait for the PORT to be open (TCP) which is more reliable than HTTP for Nest+Apollo
+          npx wait-on tcp:4000 --timeout 60000
         env:
           DATABASE_URL: mongodb://localhost:27017/test-db?directConnection=true
           PORT: 4000
