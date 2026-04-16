@@ -30,17 +30,6 @@ jobs:
   backend-tests:
     name: Backend Tests (Unit & E2E)
     runs-on: ubuntu-latest
-    services:
-      mongodb:
-        image: mongo:6
-        ports:
-          - 27017:27017
-        options: >-
-          --replSet rs0
-          --health-cmd "echo 'db.runCommand({ping:1}).ok' | mongosh localhost:27017/test --quiet"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     permissions:
       contents: read
     defaults:
@@ -56,11 +45,16 @@ jobs:
           cache: npm
           cache-dependency-path: backend/package-lock.json
       
-      - name: Setup MongoDB Replica Set
+      - name: Start MongoDB Replica Set
         run: |
-          docker exec ${{ job.services.mongodb.id }} mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]})" || true
+          docker run -d --name mongodb -p 27017:27017 mongo:6 mongod --replSet rs0 --bind_ip_all
+          # Wait for mongo to be ready
+          until docker exec mongodb mongosh --eval "db.runCommand({ping:1})" &>/dev/null; do
+            echo "Waiting for MongoDB..."
+            sleep 2
+          done
+          docker exec mongodb mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]})"
           sleep 10
-        continue-on-error: true
 
       - run: npm install
       - run: npx prisma generate
@@ -70,17 +64,6 @@ jobs:
   frontend-tests:
     name: Frontend Tests (Unit & E2E)
     runs-on: ubuntu-latest
-    services:
-      mongodb:
-        image: mongo:6
-        ports:
-          - 27017:27017
-        options: >-
-          --replSet rs0
-          --health-cmd "echo 'db.runCommand({ping:1}).ok' | mongosh localhost:27017/test --quiet"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     permissions:
       contents: read
     defaults:
@@ -97,11 +80,16 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       
-      - name: Setup MongoDB Replica Set
+      - name: Start MongoDB Replica Set
         run: |
-          docker exec ${{ job.services.mongodb.id }} mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]})" || true
+          docker run -d --name mongodb -p 27017:27017 mongo:6 mongod --replSet rs0 --bind_ip_all
+          # Wait for mongo to be ready
+          until docker exec mongodb mongosh --eval "db.runCommand({ping:1})" &>/dev/null; do
+            echo "Waiting for MongoDB..."
+            sleep 2
+          done
+          docker exec mongodb mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'localhost:27017'}]})"
           sleep 10
-        continue-on-error: true
 
       - run: npm install
       
@@ -209,8 +197,7 @@ jobs:
         with:
           host: ${{ secrets.VPS_SSH_HOST }}
           username: ${{ secrets.VPS_SSH_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: ${{ secrets.VPS_SSH_PORT }}
+          key: ${{ secrets.VPS_SSH_PORT }}
           script: |
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             export DATABASE_URL="${{ secrets.DATABASE_URL }}"
