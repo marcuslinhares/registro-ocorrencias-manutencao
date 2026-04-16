@@ -11,6 +11,8 @@ describe('IncidentsService', () => {
     incident: {
       create: jest.fn(),
       findMany: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
     },
   };
 
@@ -107,6 +109,40 @@ describe('IncidentsService', () => {
         },
         take: 5,
         orderBy: { createdAt: 'desc' },
+      });
+    });
+  });
+
+  describe('update', () => {
+    it('should update an incident', async () => {
+      const id = '1';
+      const input = { reason: 'Updated reason' };
+      const expectedResult = { id, machineName: 'A', reason: 'Updated reason', createdAt: new Date() };
+
+      mockPrismaService.incident.update.mockResolvedValue(expectedResult);
+
+      const result = await service.update(id, input);
+
+      expect(result).toEqual(expectedResult);
+      expect(mockPrismaService.incident.update).toHaveBeenCalledWith({
+        where: { id },
+        data: input,
+      });
+    });
+  });
+
+  describe('remove', () => {
+    it('should remove an incident', async () => {
+      const id = '1';
+      const expectedResult = { id, machineName: 'A', createdAt: new Date() };
+
+      mockPrismaService.incident.delete.mockResolvedValue(expectedResult);
+
+      const result = await service.remove(id);
+
+      expect(result).toEqual(expectedResult);
+      expect(mockPrismaService.incident.delete).toHaveBeenCalledWith({
+        where: { id },
       });
     });
   });

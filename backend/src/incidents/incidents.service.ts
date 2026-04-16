@@ -14,6 +14,19 @@ export class IncidentsService {
     });
   }
 
+  async update(id: string, updateIncidentInput: any) {
+    return this.prisma.incident.update({
+      where: { id },
+      data: updateIncidentInput,
+    });
+  }
+
+  async remove(id: string) {
+    return this.prisma.incident.delete({
+      where: { id },
+    });
+  }
+
   async findAll(limit: number = 10, machineName?: string, typeOfOccurrence?: string, search?: string) {
     const where: any = {};
 

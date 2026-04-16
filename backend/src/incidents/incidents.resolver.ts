@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { IncidentsService } from './incidents.service';
 import { Incident } from './entities/incident.model';
 import { CreateIncidentInput } from './dto/create-incident.input';
+import { UpdateIncidentInput } from './dto/update-incident.input';
 
 @Resolver(() => Incident)
 export class IncidentsResolver {
@@ -12,6 +13,19 @@ export class IncidentsResolver {
     @Args('createIncidentInput') createIncidentInput: CreateIncidentInput,
   ) {
     return this.incidentsService.create(createIncidentInput);
+  }
+
+  @Mutation(() => Incident)
+  async updateIncident(
+    @Args('id') id: string,
+    @Args('updateIncidentInput') updateIncidentInput: UpdateIncidentInput,
+  ) {
+    return this.incidentsService.update(id, updateIncidentInput);
+  }
+
+  @Mutation(() => Incident)
+  async deleteIncident(@Args('id') id: string) {
+    return this.incidentsService.remove(id);
   }
 
   @Query(() => [Incident], { name: 'lastIncidents' })

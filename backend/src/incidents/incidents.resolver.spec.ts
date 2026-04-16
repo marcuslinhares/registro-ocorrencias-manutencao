@@ -10,6 +10,8 @@ describe('IncidentsResolver', () => {
   const mockIncidentsService = {
     create: jest.fn(),
     findAll: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -79,6 +81,35 @@ describe('IncidentsResolver', () => {
 
       expect(result).toEqual(expectedIncidents);
       expect(mockIncidentsService.findAll).toHaveBeenCalledWith(5, undefined, undefined, undefined);
+    });
+  });
+
+  describe('updateIncident', () => {
+    it('should update an incident', async () => {
+      const id = '1';
+      const input = { reason: 'Updated' };
+      const expectedResult = { id, machineName: 'A', ...input, createdAt: new Date() };
+
+      mockIncidentsService.update.mockResolvedValue(expectedResult);
+
+      const result = await resolver.updateIncident(id, input);
+
+      expect(result).toEqual(expectedResult);
+      expect(mockIncidentsService.update).toHaveBeenCalledWith(id, input);
+    });
+  });
+
+  describe('deleteIncident', () => {
+    it('should delete an incident', async () => {
+      const id = '1';
+      const expectedResult = { id, machineName: 'A', createdAt: new Date() };
+
+      mockIncidentsService.remove.mockResolvedValue(expectedResult);
+
+      const result = await resolver.deleteIncident(id);
+
+      expect(result).toEqual(expectedResult);
+      expect(mockIncidentsService.remove).toHaveBeenCalledWith(id);
     });
   });
 });
