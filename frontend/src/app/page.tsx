@@ -46,9 +46,9 @@ export default function Home() {
                 placeholder="Buscar por equipamento, código ou motivo..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#413129]"
+                className="w-full h-[32px] pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#413129]"
               />
-              <div className="absolute left-3 top-2.5 text-gray-400">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -68,7 +68,7 @@ export default function Home() {
             <div className="flex gap-2 items-center">
               <button
                 onClick={() => toggleTypeFilter('Preventiva')}
-                className={`px-4 h-[44px] border rounded-md transition-colors ${
+                className={`px-4 h-[32px] border rounded-md transition-colors ${
                   typeFilter === 'Preventiva'
                     ? 'bg-[#4B5563] text-white border-[#4B5563]'
                     : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
@@ -78,7 +78,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => toggleTypeFilter('Corretiva')}
-                className={`px-4 h-[44px] border rounded-md transition-colors ${
+                className={`px-4 h-[32px] border rounded-md transition-colors ${
                   typeFilter === 'Corretiva'
                     ? 'bg-[#EF4444] text-white border-[#EF4444]'
                     : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
@@ -88,7 +88,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => toggleTypeFilter('Planejada')}
-                className={`px-4 h-[44px] border rounded-md transition-colors ${
+                className={`px-4 h-[32px] border rounded-md transition-colors ${
                   typeFilter === 'Planejada'
                     ? 'bg-[#3B82F6] text-white border-[#3B82F6]'
                     : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'

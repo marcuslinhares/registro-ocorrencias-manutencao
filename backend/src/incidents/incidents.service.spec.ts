@@ -13,6 +13,7 @@ describe('IncidentsService', () => {
       findMany: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
   };
 
@@ -64,7 +65,7 @@ describe('IncidentsService', () => {
   });
 
   describe('findAll', () => {
-    it('should return incidents with default limit', async () => {
+    it('should return incidents and count with default limit', async () => {
       const expectedIncidents = [
         {
           id: '1',
@@ -80,10 +81,11 @@ describe('IncidentsService', () => {
       ];
 
       mockPrismaService.incident.findMany.mockResolvedValue(expectedIncidents);
+      mockPrismaService.incident.count.mockResolvedValue(1);
 
       const result = await service.findAll();
 
-      expect(result).toEqual(expectedIncidents);
+      expect(result).toEqual({ items: expectedIncidents, totalCount: 1 });
       expect(mockPrismaService.incident.findMany).toHaveBeenCalledWith({
         where: {},
         take: 10,
@@ -91,16 +93,18 @@ describe('IncidentsService', () => {
       });
     });
 
-    it('should return incidents with custom filters', async () => {
+    it('should return incidents and count with custom filters', async () => {
       mockPrismaService.incident.findMany.mockResolvedValue([]);
+      mockPrismaService.incident.count.mockResolvedValue(0);
 
-      const result = await service.findAll(5, 'Machine B', 'Preventiva', 'search term');
+      const result = await service.findAll(5, 'Machine B', 'Preventiva', 'search term', 'Em Aberto');
 
-      expect(result).toEqual([]);
+      expect(result).toEqual({ items: [], totalCount: 0 });
       expect(mockPrismaService.incident.findMany).toHaveBeenCalledWith({
         where: {
           machineName: 'Machine B',
           typeOfOccurrence: 'Preventiva',
+          status: 'Em Aberto',
           OR: [
             { machineName: { contains: 'search term', mode: 'insensitive' } },
             { reason: { contains: 'search term', mode: 'insensitive' } },

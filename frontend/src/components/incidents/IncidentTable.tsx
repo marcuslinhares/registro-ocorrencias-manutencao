@@ -80,7 +80,7 @@ export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTabl
 
   const { data, loading, error } = useQuery(LAST_INCIDENTS, {
     variables: { 
-      limit: 5, // Limit to only last 5 incidents as requested
+      limit: 5,
       typeOfOccurrence: typeOfOccurrence || undefined,
       search: search || undefined,
       status: status || undefined
@@ -193,10 +193,11 @@ export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTabl
                   <TableCell className="text-center">
                     <div className="flex justify-center gap-2">
                       <IncidentModal incident={incident}>
-                        <button className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-orange-500 transition-colors cursor-pointer">
+                        <div className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-orange-500 transition-colors cursor-pointer">
                           <Pencil className="h-3.5 w-3.5" />
-                        </button>
+                        </div>
                       </IncidentModal>
+
                       <Dialog open={deleteId === incident.id} onOpenChange={(open) => setDeleteId(open ? incident.id : null)}>
                         <DialogTrigger>
                           <div className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-red-500 transition-colors cursor-pointer">

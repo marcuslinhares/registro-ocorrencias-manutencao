@@ -18,26 +18,31 @@ const mocks = [
     request: {
       query: LAST_INCIDENTS,
       variables: { 
-        limit: 10,
+        limit: 5,
         typeOfOccurrence: undefined,
-        search: undefined
+        search: undefined,
+        status: undefined
       },
     },
     result: {
       data: {
-        lastIncidents: [
-          {
-            id: '1',
-            machineName: 'Machine A',
-            typeOfOccurrence: 'Corretiva',
-            status: 'Em Aberto',
-            reason: 'Belt broken',
-            description: 'Long description',
-            severity: 'Alta',
-            isMachineStopped: true,
-            createdAt: '2025-01-15T10:30:00Z',
-          },
-        ],
+        lastIncidents: {
+          items: [
+            {
+              id: '1',
+              machineName: 'Machine A',
+              typeOfOccurrence: 'Corretiva',
+              status: 'Em Aberto',
+              reason: 'Belt broken',
+              description: 'Long description',
+              severity: 'Alta',
+              isMachineStopped: true,
+              createdAt: '2025-01-15T10:30:00Z',
+              finishedAt: null,
+            },
+          ],
+          totalCount: 1,
+        },
       },
     },
   },
@@ -60,9 +65,10 @@ describe('IncidentTable', () => {
         request: {
           query: LAST_INCIDENTS,
           variables: { 
-            limit: 10,
+            limit: 5,
             typeOfOccurrence: undefined,
-            search: undefined
+            search: undefined,
+            status: undefined
           },
         },
         error: new Error('Network error'),
@@ -86,7 +92,7 @@ describe('IncidentTable', () => {
     );
 
     expect(await screen.findByText('Machine A')).toBeInTheDocument();
-    expect(screen.getByText('corretiva')).toBeInTheDocument();
+    expect(screen.getByText(/corretiva/i)).toBeInTheDocument();
     expect(screen.getByText('Belt broken')).toBeInTheDocument();
   });
 
@@ -96,13 +102,19 @@ describe('IncidentTable', () => {
         request: {
           query: LAST_INCIDENTS,
           variables: { 
-            limit: 10,
+            limit: 5,
             typeOfOccurrence: undefined,
-            search: undefined
+            search: undefined,
+            status: undefined
           },
         },
         result: {
-          data: { lastIncidents: [] },
+          data: { 
+            lastIncidents: {
+              items: [],
+              totalCount: 0,
+            } 
+          },
         },
       },
     ];

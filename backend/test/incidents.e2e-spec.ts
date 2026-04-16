@@ -57,10 +57,13 @@ describe('Incidents (e2e)', () => {
     const lastIncidentsQuery = `
       query {
         lastIncidents(limit: 5) {
-          id
-          machineName
-          typeOfOccurrence
-          status
+          items {
+            id
+            machineName
+            typeOfOccurrence
+            status
+          }
+          totalCount
         }
       }
     `;
@@ -71,7 +74,9 @@ describe('Incidents (e2e)', () => {
       .expect(200)
       .expect((res) => {
         expect(res.body.data.lastIncidents).toBeDefined();
-        expect(Array.isArray(res.body.data.lastIncidents)).toBe(true);
+        expect(res.body.data.lastIncidents.items).toBeDefined();
+        expect(Array.isArray(res.body.data.lastIncidents.items)).toBe(true);
+        expect(typeof res.body.data.lastIncidents.totalCount).toBe('number');
       });
   });
 });

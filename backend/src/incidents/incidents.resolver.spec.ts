@@ -35,20 +35,14 @@ describe('IncidentsResolver', () => {
   describe('createIncident', () => {
     it('should create an incident', async () => {
       const input: CreateIncidentInput = {
-        machineName: 'Machine A',
-        reason: 'Broken belt',
-        description: 'Belt needs replacement',
+        machineName: 'A',
+        reason: 'R',
+        description: 'D',
         severity: 'Alta',
         typeOfOccurrence: 'Corretiva',
-        isMachineStopped: true,
+        isMachineStopped: false,
       };
-
-      const expectedResult = {
-        id: '1',
-        ...input,
-        status: 'Em Aberto',
-        createdAt: new Date(),
-      };
+      const expectedResult = { id: '1', ...input, createdAt: new Date() };
 
       mockIncidentsService.create.mockResolvedValue(expectedResult);
 
@@ -61,26 +55,14 @@ describe('IncidentsResolver', () => {
 
   describe('findAll', () => {
     it('should return incidents with given limit', async () => {
-      const expectedIncidents = [
-        {
-          id: '1',
-          machineName: 'Machine A',
-          reason: 'Test',
-          description: 'Test desc',
-          severity: 'Alta',
-          typeOfOccurrence: 'Corretiva',
-          isMachineStopped: false,
-          status: 'Em Aberto',
-          createdAt: new Date(),
-        },
-      ];
-
-      mockIncidentsService.findAll.mockResolvedValue(expectedIncidents);
+      const expectedIncidents = [{ id: '1', machineName: 'A', createdAt: new Date() }];
+      const expectedResult = { items: expectedIncidents, totalCount: 1 };
+      mockIncidentsService.findAll.mockResolvedValue(expectedResult);
 
       const result = await resolver.findAll(5);
 
-      expect(result).toEqual(expectedIncidents);
-      expect(mockIncidentsService.findAll).toHaveBeenCalledWith(5, undefined, undefined, undefined);
+      expect(result).toEqual(expectedResult);
+      expect(mockIncidentsService.findAll).toHaveBeenCalledWith(5, undefined, undefined, undefined, undefined);
     });
   });
 
