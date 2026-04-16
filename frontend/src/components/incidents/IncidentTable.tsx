@@ -39,6 +39,7 @@ export const LAST_INCIDENTS = gql`
       severity
       isMachineStopped
       createdAt
+      finishedAt
     }
   }
 `;
@@ -61,6 +62,7 @@ interface Incident {
   severity: string;
   isMachineStopped: boolean;
   createdAt: string;
+  finishedAt?: string;
 }
 
 interface IncidentTableProps {
@@ -113,13 +115,22 @@ export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTabl
     }
   };
 
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case 'Concluido':
+        return 'bg-[#10B981] text-white hover:bg-[#059669]'; // Green
+      default:
+        return 'bg-[#1F2937] text-white hover:bg-[#111827]'; // Dark
+    }
+  };
+
   const handleDelete = (id: string) => {
     setIsDeleting(true);
     deleteIncident({ variables: { id } });
   };
 
   return (
-    <div className="rounded-md border bg-white">
+    <div className="rounded-md border bg-white overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50/50">
@@ -127,20 +138,21 @@ export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTabl
             <TableHead className="font-semibold text-gray-900">Tipo</TableHead>
             <TableHead className="font-semibold text-gray-900">Status</TableHead>
             <TableHead className="font-semibold text-gray-900">Motivo</TableHead>
-            <TableHead className="font-semibold text-gray-900">Data</TableHead>
+            <TableHead className="font-semibold text-gray-900">Início da Ocorrência</TableHead>
+            <TableHead className="font-semibold text-gray-900">Fim da Ocorrência</TableHead>
             <TableHead className="font-semibold text-gray-900 text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {incidents.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+              <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                 Nenhuma ocorrência encontrada.
               </TableCell>
             </TableRow>
           ) : (
             incidents.map((incident) => (
-              <TableRow key={incident.id} className="hover:bg-gray-50/50 transition-colors">
+              <TableRow key={incident.id} className="hover:bg-gray-50/50 transition-colors text-sm">
                 <TableCell className="font-medium text-gray-900">
                   <div className="flex flex-col">
                     <span>{incident.machineName}</span>
@@ -148,33 +160,38 @@ export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTabl
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className={`border-none ${getTypeBadgeColor(incident.typeOfOccurrence)}`}>
-                    {incident.typeOfOccurrence.toLowerCase()}
+                  <Badge variant="outline" className={`border-none lowercase ${getTypeBadgeColor(incident.typeOfOccurrence)}`}>
+                    {incident.typeOfOccurrence}
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="bg-[#1F2937] text-white border-none hover:bg-[#111827]">
+                  <Badge variant="outline" className={`border-none hover:opacity-90 ${getStatusBadgeColor(incident.status)}`}>
                     {incident.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-gray-600">
+                <TableCell className="text-gray-600 max-w-[200px] truncate">
                   {incident.reason}
                 </TableCell>
-                <TableCell className="text-gray-500">
+                <TableCell className="text-gray-500 whitespace-nowrap">
                   {format(new Date(incident.createdAt), 'dd/MM/yyyy. HH:mm', { locale: ptBR })}
+                </TableCell>
+                <TableCell className="text-gray-500 whitespace-nowrap">
+                  {incident.finishedAt 
+                    ? format(new Date(incident.finishedAt), 'dd/MM/yyyy. HH:mm', { locale: ptBR })
+                    : '-'}
                 </TableCell>
                 <TableCell className="text-center">
                   <div className="flex justify-center gap-2">
                     <IncidentModal incident={incident}>
-                      <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-orange-500 transition-colors">
-                        <Pencil className="h-4 w-4" />
+                      <button className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-orange-500 transition-colors">
+                        <Pencil className="h-3.5 w-3.5" />
                       </button>
                     </IncidentModal>
 
                     <Dialog>
                       <DialogTrigger>
-                        <div className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-red-500 transition-colors cursor-pointer">
-                          <Trash2 className="h-4 w-4" />
+                        <div className="p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-red-500 transition-colors cursor-pointer">
+                          <Trash2 className="h-3.5 w-3.5" />
                         </div>
                       </DialogTrigger>
                       <DialogContent>
@@ -184,7 +201,7 @@ export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTabl
                             Tem certeza que deseja excluir esta ordem de serviço? Esta ação não pode ser desfeita.
                           </DialogDescription>
                         </DialogHeader>
-                        <DialogFooter className="gap-2">
+                        <DialogFooter className="gap-2 pt-4">
                           <Button variant="outline" onClick={() => (document.querySelector('[data-state="open"]') as any)?.click()}>
                             Cancelar
                           </Button>

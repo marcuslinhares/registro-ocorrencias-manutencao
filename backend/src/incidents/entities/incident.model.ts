@@ -28,4 +28,7 @@ export class Incident {
 
   @Field()
   createdAt: Date;
+
+  @Field({ nullable: true })
+  finishedAt?: Date;
 }

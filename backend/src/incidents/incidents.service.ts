@@ -15,9 +15,17 @@ export class IncidentsService {
   }
 
   async update(id: string, updateIncidentInput: any) {
+    const data = { ...updateIncidentInput };
+
+    if (data.status === 'Concluido') {
+      data.finishedAt = new Date();
+    } else if (data.status === 'Em Aberto') {
+      data.finishedAt = null;
+    }
+
     return this.prisma.incident.update({
       where: { id },
-      data: updateIncidentInput,
+      data,
     });
   }
 

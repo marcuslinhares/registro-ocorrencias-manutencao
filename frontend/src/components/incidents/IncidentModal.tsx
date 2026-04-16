@@ -54,14 +54,18 @@ const UPDATE_INCIDENT = gql`
 `;
 
 const LAST_INCIDENTS = gql`
-  query LastIncidents($limit: Int, $typeOfOccurrence: String, $search: String) {
-    lastIncidents(limit: $limit, typeOfOccurrence: $typeOfOccurrence, search: $search) {
+  query LastIncidents($limit: Int, $typeOfOccurrence: String, $search: String, $status: String) {
+    lastIncidents(limit: $limit, typeOfOccurrence: $typeOfOccurrence, search: $search, status: $status) {
       id
       machineName
       typeOfOccurrence
       status
       reason
+      description
+      severity
+      isMachineStopped
       createdAt
+      finishedAt
     }
   }
 `;
@@ -72,6 +76,7 @@ const formSchema = z.object({
   typeOfOccurrence: z.string().min(1, 'Selecione o tipo'),
   severity: z.string().min(1, 'Selecione a gravidade'),
   isMachineStopped: z.boolean(),
+  status: z.string().optional(),
   description: z.string().min(10, 'Descrição deve ter no mínimo 10 caracteres'),
 });
 
@@ -87,6 +92,7 @@ export function IncidentModal({ incident, children }: { incident?: any, children
       typeOfOccurrence: '',
       severity: '',
       isMachineStopped: false,
+      status: 'Em Aberto',
       description: '',
     },
   });
@@ -100,6 +106,7 @@ export function IncidentModal({ incident, children }: { incident?: any, children
         typeOfOccurrence: incident.typeOfOccurrence,
         severity: incident.severity || 'Média',
         isMachineStopped: incident.isMachineStopped || false,
+        status: incident.status || 'Em Aberto',
         description: incident.description || '',
       });
     } else {
@@ -109,17 +116,17 @@ export function IncidentModal({ incident, children }: { incident?: any, children
         typeOfOccurrence: '',
         severity: '',
         isMachineStopped: false,
+        status: 'Em Aberto',
         description: '',
       });
     }
-  }, [incident, form]);
+  }, [incident, form, open]);
 
   const [createIncident, { loading: creating }] = useMutation(CREATE_INCIDENT, {
     refetchQueries: [{ query: LAST_INCIDENTS, variables: { limit: 10 } }],
     onCompleted: () => {
       toast({ title: 'Sucesso!', description: 'Ordem de serviço criada com sucesso.' });
       setOpen(false);
-      form.reset();
     },
     onError: (error) => {
       toast({ title: 'Erro!', description: error.message });
@@ -140,17 +147,18 @@ export function IncidentModal({ incident, children }: { incident?: any, children
   const loading = creating || updating;
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    const { status, ...rest } = values;
     if (incident) {
       updateIncident({
         variables: {
           id: incident.id,
-          updateIncidentInput: values,
+          updateIncidentInput: { ...rest, status },
         },
       });
     } else {
       createIncident({
         variables: {
-          createIncidentInput: values,
+          createIncidentInput: rest,
         },
       });
     }
@@ -247,6 +255,32 @@ export function IncidentModal({ incident, children }: { incident?: any, children
                 )}
               />
             </div>
+
+            {incident && (
+              <div className="grid grid-cols-1 gap-6">
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-700 font-semibold">Status da Ocorrência *</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="focus:ring-[#413129]">
+                            <SelectValue placeholder="Selecione o status..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Em Aberto">Em Aberto</SelectItem>
+                          <SelectItem value="Concluido">Concluido</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
 
             <div className="bg-gray-50 p-4 rounded-md border border-gray-100">
               <FormField

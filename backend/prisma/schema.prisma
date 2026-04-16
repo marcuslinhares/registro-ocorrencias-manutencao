@@ -23,4 +23,5 @@ model Incident {
   isMachineStopped Boolean  @default(false)
   status           String   @default("Em Aberto")
   createdAt        DateTime @default(now())
+  finishedAt       DateTime?
 }

@@ -1,8 +1,6 @@
-# Registro de Ocorrências Todo List
+# CRUD Incidentes Todo List
 
-- [x] Task 1: Scaffolding Modular
-- [x] Task 2: Backend - Módulo de Incidentes (NestJS Modular)
-- [x] Task 3: Frontend - Layout e Apollo
-- [x] Task 4: Frontend - Tabela de Ocorrências (Listagem)
-- [x] Task 5: Frontend - Modal de Nova Ocorrência
-- [x] Task 6: Finalização e Docker Compose
+- [ ] Task 1: Backend - Novas Mutations GraphQL
+- [ ] Task 2: Frontend - Refatoração do Modal (Editar)
+- [ ] Task 3: Frontend - Coluna de Ações e Exclusão
+- [ ] Task 4: Verificação Final e CI/CD

@@ -104,8 +104,7 @@ export default function Home() {
                 <SelectContent>
                   <SelectItem value="all">Status</SelectItem>
                   <SelectItem value="Em Aberto">Em Aberto</SelectItem>
-                  <SelectItem value="Em Andamento">Em Andamento</SelectItem>
-                  <SelectItem value="Finalizada">Finalizada</SelectItem>
+                  <SelectItem value="Concluido">Concluido</SelectItem>
                 </SelectContent>
               </Select>
             </div>
