@@ -123,7 +123,7 @@ export function IncidentModal({ incident, children }: { incident?: any, children
   }, [incident, form, open]);
 
   const [createIncident, { loading: creating }] = useMutation(CREATE_INCIDENT, {
-    refetchQueries: [{ query: LAST_INCIDENTS, variables: { limit: 5 } }],
+    refetchQueries: ['LastIncidents'],
     onCompleted: () => {
       toast({ title: 'Sucesso!', description: 'Ordem de serviço criada com sucesso.' });
       setOpen(false);
@@ -134,7 +134,7 @@ export function IncidentModal({ incident, children }: { incident?: any, children
   });
 
   const [updateIncident, { loading: updating }] = useMutation(UPDATE_INCIDENT, {
-    refetchQueries: [{ query: LAST_INCIDENTS, variables: { limit: 5 } }],
+    refetchQueries: ['LastIncidents'],
     onCompleted: () => {
       toast({ title: 'Sucesso!', description: 'Ordem de serviço atualizada com sucesso.' });
       setOpen(false);

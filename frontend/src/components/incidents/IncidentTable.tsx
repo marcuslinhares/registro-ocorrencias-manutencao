@@ -89,15 +89,7 @@ export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTabl
   });
 
   const [deleteIncident, { loading: isDeleting }] = useMutation(DELETE_INCIDENT, {
-    refetchQueries: [{ 
-      query: LAST_INCIDENTS, 
-      variables: { 
-        limit: 5, 
-        typeOfOccurrence: typeOfOccurrence || undefined,
-        search: search || undefined,
-        status: status || undefined
-      } 
-    }],
+    refetchQueries: ['LastIncidents'],
     onCompleted: () => {
       toast({ title: 'Sucesso!', description: 'Ocorrência excluída com sucesso.' });
       setDeleteId(null);
