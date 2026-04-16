@@ -12,7 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Printer, ExternalLink, Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { IncidentModal } from './IncidentModal';
 import {
   Dialog,
@@ -163,13 +163,6 @@ export function IncidentTable({ typeOfOccurrence, search }: IncidentTableProps) 
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-600 transition-colors">
-                      <Printer className="h-4 w-4" />
-                    </button>
-                    <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-blue-600 transition-colors">
-                      <ExternalLink className="h-4 w-4" />
-                    </button>
-                    
                     <IncidentModal incident={incident}>
                       <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-orange-500 transition-colors">
                         <Pencil className="h-4 w-4" />
