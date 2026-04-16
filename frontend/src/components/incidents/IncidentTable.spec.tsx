@@ -32,6 +32,9 @@ const mocks = [
             typeOfOccurrence: 'Corretiva',
             status: 'Em Aberto',
             reason: 'Belt broken',
+            description: 'Long description',
+            severity: 'Alta',
+            isMachineStopped: true,
             createdAt: '2025-01-15T10:30:00Z',
           },
         ],
@@ -83,7 +86,7 @@ describe('IncidentTable', () => {
     );
 
     expect(await screen.findByText('Machine A')).toBeInTheDocument();
-    expect(screen.getByText('Corretiva')).toBeInTheDocument();
+    expect(screen.getByText('corretiva')).toBeInTheDocument();
     expect(screen.getByText('Belt broken')).toBeInTheDocument();
   });
 

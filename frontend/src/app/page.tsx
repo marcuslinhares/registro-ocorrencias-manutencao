@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { IncidentTable } from '@/components/incidents/IncidentTable';
-import { NewIncidentModal } from '@/components/incidents/NewIncidentModal';
+import { IncidentModal } from '@/components/incidents/IncidentModal';
 import { Toaster } from '@/components/ui/toaster';
 
 export default function Home() {
@@ -27,7 +27,7 @@ export default function Home() {
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Ordens de Serviço</h1>
-          <NewIncidentModal />
+          <IncidentModal />
         </div>
         
         <div className="bg-white p-6 shadow-sm rounded-lg border border-gray-200">

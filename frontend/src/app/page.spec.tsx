@@ -9,9 +9,9 @@ jest.mock('@/components/incidents/IncidentTable', () => ({
   IncidentTable: () => <div data-testid="incident-table">Mock Table</div>,
 }));
 
-// Mock NewIncidentModal to avoid Apollo hooks issues in simple page tests
-jest.mock('@/components/incidents/NewIncidentModal', () => ({
-  NewIncidentModal: () => <button data-testid="new-incident-modal">+ Nova Ordem de Serviço</button>,
+// Mock IncidentModal to avoid Apollo hooks issues in simple page tests
+jest.mock('@/components/incidents/IncidentModal', () => ({
+  IncidentModal: () => <button data-testid="new-incident-modal">+ Nova Ordem de Serviço</button>,
 }));
 
 // Mock Toaster and toast
