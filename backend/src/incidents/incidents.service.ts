@@ -14,7 +14,7 @@ export class IncidentsService {
     });
   }
 
-  async findAll(limit: number = 5, machineName?: string, typeOfOccurrence?: string, search?: string) {
+  async findAll(limit: number = 10, machineName?: string, typeOfOccurrence?: string, search?: string) {
     const where: any = {};
 
     if (machineName) {

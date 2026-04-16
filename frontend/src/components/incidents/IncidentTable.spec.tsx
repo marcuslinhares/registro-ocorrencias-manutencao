@@ -17,7 +17,11 @@ const mocks = [
   {
     request: {
       query: LAST_INCIDENTS,
-      variables: { limit: 10 },
+      variables: { 
+        limit: 10,
+        typeOfOccurrence: undefined,
+        search: undefined
+      },
     },
     result: {
       data: {
@@ -52,7 +56,11 @@ describe('IncidentTable', () => {
       {
         request: {
           query: LAST_INCIDENTS,
-          variables: { limit: 10 },
+          variables: { 
+            limit: 10,
+            typeOfOccurrence: undefined,
+            search: undefined
+          },
         },
         error: new Error('Network error'),
       },
@@ -84,7 +92,11 @@ describe('IncidentTable', () => {
       {
         request: {
           query: LAST_INCIDENTS,
-          variables: { limit: 10 },
+          variables: { 
+            limit: 10,
+            typeOfOccurrence: undefined,
+            search: undefined
+          },
         },
         result: {
           data: { lastIncidents: [] },
@@ -98,6 +110,6 @@ describe('IncidentTable', () => {
       </MockedProvider>
     );
 
-    expect(await screen.findByText('Nenhuma ocorrência registrada.')).toBeInTheDocument();
+    expect(await screen.findByText('Nenhuma ocorrência encontrada.')).toBeInTheDocument();
   });
 });

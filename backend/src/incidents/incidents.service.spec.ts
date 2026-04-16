@@ -84,20 +84,28 @@ describe('IncidentsService', () => {
       expect(result).toEqual(expectedIncidents);
       expect(mockPrismaService.incident.findMany).toHaveBeenCalledWith({
         where: {},
-        take: 5,
+        take: 10,
         orderBy: { createdAt: 'desc' },
       });
     });
 
-    it('should return incidents with custom limit', async () => {
+    it('should return incidents with custom filters', async () => {
       mockPrismaService.incident.findMany.mockResolvedValue([]);
 
-      const result = await service.findAll(10);
+      const result = await service.findAll(5, 'Machine B', 'Preventiva', 'search term');
 
       expect(result).toEqual([]);
       expect(mockPrismaService.incident.findMany).toHaveBeenCalledWith({
-        where: {},
-        take: 10,
+        where: {
+          machineName: 'Machine B',
+          typeOfOccurrence: 'Preventiva',
+          OR: [
+            { machineName: { contains: 'search term', mode: 'insensitive' } },
+            { reason: { contains: 'search term', mode: 'insensitive' } },
+            { description: { contains: 'search term', mode: 'insensitive' } },
+          ],
+        },
+        take: 5,
         orderBy: { createdAt: 'desc' },
       });
     });

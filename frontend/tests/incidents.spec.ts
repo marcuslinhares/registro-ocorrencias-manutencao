@@ -11,7 +11,8 @@ test.describe('Incidents Dashboard', () => {
 
   test('should display the incident table', async ({ page }) => {
     const table = page.locator('table');
-    await expect(table).toBeVisible();
+    // Increase timeout for table visibility as it depends on data fetch
+    await expect(table).toBeVisible({ timeout: 15000 });
     await expect(page.getByText('Equipamento')).toBeVisible();
   });
 
@@ -24,7 +25,7 @@ test.describe('Incidents Dashboard', () => {
     // Fill form
     const uniqueReason = `E2E Test - ${Date.now()}`;
     await modal.locator('input[placeholder="Digite o motivo..."]').fill(uniqueReason);
-    await modal.locator('textarea[placeholder="Descreva detalhadamente o serviço..."]').fill('Description for E2E frontend registration test.');
+    await modal.locator('textarea[placeholder="Descreva detalhadamente o problema e o serviço que será realizado..."]').fill('Description for E2E frontend registration test.');
     
     // Select machine
     await modal.getByText('Selecione a máquina...').click();
