@@ -4,18 +4,18 @@
 #   VPS_SSH_HOST        - VPS server IP or hostname
 #   VPS_SSH_USER        - SSH username for VPS
 #   VPS_SSH_KEY         - Private SSH key for VPS access
-#   VPS_SSH_PORT        - SSH port (e.g. 22)
-#   GHCR_PAT            - Personal Access Token with read:packages scope (used by VPS to pull images)
-#   DATABASE_URL        - Database connection string for backend on VPS
-#   NEXT_PUBLIC_API_URL - Public API URL for the frontend on VPS
+#   VPS_SSH_PORT        - SSH port (default 22)
+#   GHCR_PAT            - Personal Access Token with read:packages scope
+#   DATABASE_URL        - Database connection string
+#   NEXT_PUBLIC_API_URL - Public API URL
 
 name: CI/CD Pipeline
 
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
   push:
-    branches: [main]
+    branches: [master]
 
 env:
   REGISTRY: ghcr.io
@@ -37,13 +37,11 @@ jobs:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: backend/package-lock.json
-
       - run: npm ci
       - run: npx prisma generate
       - run: npx jest --coverage
@@ -56,15 +54,15 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: backend/package-lock.json
-
       - run: npm ci
       - run: npx prisma generate
       - run: npx jest --config ./test/jest-e2e.json
@@ -79,13 +77,11 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-
       - run: npm ci
       - run: npx jest --coverage
 
@@ -97,21 +93,42 @@ jobs:
     defaults:
       run:
         working-directory: frontend
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEXT_PUBLIC_API_URL: http://localhost:4000/graphql
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-
       - run: npm ci
+      
+      # We need the backend running for frontend E2E tests
+      - name: Start Backend in background
+        run: |
+          cd ../backend
+          npm ci
+          npx prisma generate
+          npm run build
+          PORT=4000 npm run start:prod &
+          npx wait-on http://localhost:4000/graphql
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PORT: 4000
+
       - run: npx playwright install --with-deps chromium
-      - run: npx playwright test
+      # Start frontend and run tests
+      - name: Run Playwright tests
+        run: |
+          npm run build
+          npx playwright test --reporter=list
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000/graphql
 
   # ──────────────────────────────────────────
-  # Build & Push Docker Images (only on main)
+  # Build & Push Docker Images (only on master)
   # ──────────────────────────────────────────
 
   build-backend:
@@ -122,19 +139,17 @@ jobs:
       - backend-e2e-tests
       - frontend-unit-tests
       - frontend-e2e-tests
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     permissions:
       contents: read
       packages: write
     steps:
       - uses: actions/checkout@v4
-
       - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: docker/build-push-action@v6
         with:
           context: ./backend
@@ -151,22 +166,22 @@ jobs:
       - backend-e2e-tests
       - frontend-unit-tests
       - frontend-e2e-tests
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     permissions:
       contents: read
       packages: write
     steps:
       - uses: actions/checkout@v4
-
       - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: docker/build-push-action@v6
         with:
           context: ./frontend
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
           push: true
           tags: |
             ${{ env.FRONTEND_IMAGE }}:latest
@@ -182,12 +197,11 @@ jobs:
     needs:
       - build-backend
       - build-frontend
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
-
       - name: Copy docker-compose.prod.yml to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -197,7 +211,6 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           source: docker-compose.prod.yml
           target: ~/app
-
       - name: Deploy containers on VPS
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -207,12 +220,10 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
             echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
             export DATABASE_URL="${{ secrets.DATABASE_URL }}"
             export NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}"
             export BACKEND_IMAGE="${{ env.BACKEND_IMAGE }}:latest"
             export FRONTEND_IMAGE="${{ env.FRONTEND_IMAGE }}:latest"
-
             cd ~/app
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
