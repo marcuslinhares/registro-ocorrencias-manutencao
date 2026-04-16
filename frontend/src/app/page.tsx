@@ -98,7 +98,7 @@ export default function Home() {
               </button>
 
               <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || '')}>
-                <SelectTrigger className="w-[140px] h-[42px] bg-white border-gray-300 text-gray-700 rounded-md">
+                <SelectTrigger className="w-[140px] h-[40px] bg-white border-gray-300 text-gray-700 rounded-md shadow-none focus:ring-0">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
