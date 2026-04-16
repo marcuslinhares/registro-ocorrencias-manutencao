@@ -126,7 +126,7 @@ export function IncidentTable({ typeOfOccurrence, search }: IncidentTableProps) 
             <TableHead className="font-semibold text-gray-900">Status</TableHead>
             <TableHead className="font-semibold text-gray-900">Motivo</TableHead>
             <TableHead className="font-semibold text-gray-900">Data</TableHead>
-            <TableHead className="font-semibold text-gray-900 text-right text-black font-bold">Ações</TableHead>
+            <TableHead className="font-semibold text-gray-900 text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -161,8 +161,8 @@ export function IncidentTable({ typeOfOccurrence, search }: IncidentTableProps) 
                 <TableCell className="text-gray-500">
                   {format(new Date(incident.createdAt), 'dd/MM/yyyy. HH:mm', { locale: ptBR })}
                 </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
+                <TableCell className="text-center">
+                  <div className="flex justify-center gap-2">
                     <IncidentModal incident={incident}>
                       <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-orange-500 transition-colors">
                         <Pencil className="h-4 w-4" />
