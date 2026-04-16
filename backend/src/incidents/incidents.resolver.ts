@@ -1,6 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { IncidentsService } from './incidents.service';
 import { Incident } from './entities/incident.model';
+import { IncidentConnection } from './entities/incident-connection.model';
 import { CreateIncidentInput } from './dto/create-incident.input';
 import { UpdateIncidentInput } from './dto/update-incident.input';
 
@@ -28,7 +29,7 @@ export class IncidentsResolver {
     return this.incidentsService.remove(id);
   }
 
-  @Query(() => [Incident], { name: 'lastIncidents' })
+  @Query(() => IncidentConnection, { name: 'lastIncidents' })
   async findAll(
     @Args('limit', { type: () => Int, defaultValue: 10 }) limit: number,
     @Args('machineName', { type: () => String, nullable: true }) machineName?: string,

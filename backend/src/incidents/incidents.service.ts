@@ -58,12 +58,17 @@ export class IncidentsService {
       ];
     }
 
-    return this.prisma.incident.findMany({
-      where,
-      take: limit,
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const [items, totalCount] = await Promise.all([
+      this.prisma.incident.findMany({
+        where,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.incident.count({ where }),
+    ]);
+
+    return { items, totalCount };
   }
 }
