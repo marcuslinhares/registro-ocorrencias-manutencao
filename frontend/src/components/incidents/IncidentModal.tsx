@@ -158,11 +158,11 @@ export function IncidentModal({ incident, children }: { incident?: any, children
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         {children || (
-          <Button className="bg-[#413129] hover:bg-[#2d221c] inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-white shadow h-9 px-4 py-2">
+          <div className="bg-[#413129] hover:bg-[#2d221c] inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-white shadow h-9 px-4 py-2 cursor-pointer">
             + Nova Ordem de Serviço
-          </Button>
+          </div>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">

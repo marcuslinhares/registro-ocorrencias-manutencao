@@ -177,10 +177,10 @@ export function IncidentTable({ typeOfOccurrence, search }: IncidentTableProps) 
                     </IncidentModal>
 
                     <Dialog>
-                      <DialogTrigger asChild>
-                        <button className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-red-500 transition-colors">
+                      <DialogTrigger>
+                        <div className="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 text-red-500 transition-colors cursor-pointer">
                           <Trash2 className="h-4 w-4" />
-                        </button>
+                        </div>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
