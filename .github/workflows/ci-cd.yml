@@ -6,8 +6,8 @@
 #   VPS_SSH_KEY         - Private SSH key for VPS access
 #   VPS_SSH_PORT        - SSH port (default 22)
 #   GHCR_PAT            - Personal Access Token with read:packages scope
-#   DATABASE_URL        - Database connection string
-#   NEXT_PUBLIC_API_URL - Public API URL
+#   DATABASE_URL        - Database connection string (Atlas for VPS)
+#   NEXT_PUBLIC_API_URL - Public API URL (Domain for VPS)
 
 name: CI/CD Pipeline
 
@@ -21,6 +21,8 @@ env:
   REGISTRY: ghcr.io
   BACKEND_IMAGE: ghcr.io/${{ github.repository }}/backend
   FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/frontend
+  # MongoDB for tests in CI
+  MONGODB_TEST_URL: mongodb://localhost:27017/test-db?directConnection=true
 
 jobs:
   # ──────────────────────────────────────────
@@ -49,13 +51,18 @@ jobs:
   backend-e2e-tests:
     name: Backend E2E Tests
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6
+        ports:
+          - 27017:27017
     permissions:
       contents: read
     defaults:
       run:
         working-directory: backend
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: mongodb://localhost:27017/test-db?directConnection=true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -88,13 +95,18 @@ jobs:
   frontend-e2e-tests:
     name: Frontend E2E Tests
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6
+        ports:
+          - 27017:27017
     permissions:
       contents: read
     defaults:
       run:
         working-directory: frontend
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: mongodb://localhost:27017/test-db?directConnection=true
       NEXT_PUBLIC_API_URL: http://localhost:4000/graphql
     steps:
       - uses: actions/checkout@v4
@@ -113,9 +125,9 @@ jobs:
           npx prisma generate
           npm run build
           PORT=4000 npm run start:prod &
-          npx wait-on http://localhost:4000/graphql
+          npx wait-on http://localhost:4000/graphql --timeout 60000
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: mongodb://localhost:27017/test-db?directConnection=true
           PORT: 4000
 
       - run: npx playwright install --with-deps chromium

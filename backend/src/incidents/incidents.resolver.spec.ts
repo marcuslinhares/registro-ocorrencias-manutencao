@@ -78,7 +78,7 @@ describe('IncidentsResolver', () => {
       const result = await resolver.findAll(5);
 
       expect(result).toEqual(expectedIncidents);
-      expect(mockIncidentsService.findAll).toHaveBeenCalledWith(5);
+      expect(mockIncidentsService.findAll).toHaveBeenCalledWith(5, undefined, undefined, undefined);
     });
   });
 });

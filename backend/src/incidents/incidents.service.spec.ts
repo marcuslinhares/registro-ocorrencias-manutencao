@@ -83,6 +83,7 @@ describe('IncidentsService', () => {
 
       expect(result).toEqual(expectedIncidents);
       expect(mockPrismaService.incident.findMany).toHaveBeenCalledWith({
+        where: {},
         take: 5,
         orderBy: { createdAt: 'desc' },
       });
@@ -95,6 +96,7 @@ describe('IncidentsService', () => {
 
       expect(result).toEqual([]);
       expect(mockPrismaService.incident.findMany).toHaveBeenCalledWith({
+        where: {},
         take: 10,
         orderBy: { createdAt: 'desc' },
       });
