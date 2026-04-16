@@ -4,11 +4,19 @@ import { useState, useEffect } from 'react';
 import { IncidentTable } from '@/components/incidents/IncidentTable';
 import { IncidentModal } from '@/components/incidents/IncidentModal';
 import { Toaster } from '@/components/ui/toaster';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function Home() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
   // Debounce search input to avoid too many requests
   useEffect(() => {
@@ -88,12 +96,25 @@ export default function Home() {
               >
                 Planejada
               </button>
+
+              <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || 'all')}>
+                <SelectTrigger className="w-[180px] bg-white border-gray-300">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os Status</SelectItem>
+                  <SelectItem value="Em Aberto">Em Aberto</SelectItem>
+                  <SelectItem value="Em Andamento">Em Andamento</SelectItem>
+                  <SelectItem value="Finalizada">Finalizada</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           
           <IncidentTable 
             typeOfOccurrence={typeFilter} 
             search={debouncedSearch} 
+            status={statusFilter === 'all' ? undefined : statusFilter}
           />
         </div>
       </div>

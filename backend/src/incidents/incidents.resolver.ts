@@ -34,7 +34,8 @@ export class IncidentsResolver {
     @Args('machineName', { type: () => String, nullable: true }) machineName?: string,
     @Args('typeOfOccurrence', { type: () => String, nullable: true }) typeOfOccurrence?: string,
     @Args('search', { type: () => String, nullable: true }) search?: string,
+    @Args('status', { type: () => String, nullable: true }) status?: string,
   ) {
-    return this.incidentsService.findAll(limit, machineName, typeOfOccurrence, search);
+    return this.incidentsService.findAll(limit, machineName, typeOfOccurrence, search, status);
   }
 }

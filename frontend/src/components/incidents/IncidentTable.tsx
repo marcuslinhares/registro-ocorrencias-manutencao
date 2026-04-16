@@ -28,8 +28,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
 export const LAST_INCIDENTS = gql`
-  query LastIncidents($limit: Int, $typeOfOccurrence: String, $search: String) {
-    lastIncidents(limit: $limit, typeOfOccurrence: $typeOfOccurrence, search: $search) {
+  query LastIncidents($limit: Int, $typeOfOccurrence: String, $search: String, $status: String) {
+    lastIncidents(limit: $limit, typeOfOccurrence: $typeOfOccurrence, search: $search, status: $status) {
       id
       machineName
       typeOfOccurrence
@@ -66,9 +66,10 @@ interface Incident {
 interface IncidentTableProps {
   typeOfOccurrence?: string;
   search?: string;
+  status?: string;
 }
 
-export function IncidentTable({ typeOfOccurrence, search }: IncidentTableProps) {
+export function IncidentTable({ typeOfOccurrence, search, status }: IncidentTableProps) {
   const { toast } = useToast();
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -76,13 +77,14 @@ export function IncidentTable({ typeOfOccurrence, search }: IncidentTableProps) 
     variables: { 
       limit: 10,
       typeOfOccurrence: typeOfOccurrence || undefined,
-      search: search || undefined
+      search: search || undefined,
+      status: status || undefined
     },
     fetchPolicy: 'cache-and-network',
   });
 
   const [deleteIncident] = useMutation(DELETE_INCIDENT, {
-    refetchQueries: [{ query: LAST_INCIDENTS, variables: { limit: 10 } }],
+    refetchQueries: [{ query: LAST_INCIDENTS, variables: { limit: 10, typeOfOccurrence, search, status } }],
     onCompleted: () => {
       toast({ title: 'Sucesso!', description: 'Ocorrência excluída com sucesso.' });
       setIsDeleting(false);

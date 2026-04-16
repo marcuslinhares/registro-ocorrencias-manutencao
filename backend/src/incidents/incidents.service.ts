@@ -27,7 +27,7 @@ export class IncidentsService {
     });
   }
 
-  async findAll(limit: number = 10, machineName?: string, typeOfOccurrence?: string, search?: string) {
+  async findAll(limit: number = 10, machineName?: string, typeOfOccurrence?: string, search?: string, status?: string) {
     const where: any = {};
 
     if (machineName) {
@@ -36,6 +36,10 @@ export class IncidentsService {
 
     if (typeOfOccurrence) {
       where.typeOfOccurrence = typeOfOccurrence;
+    }
+
+    if (status) {
+      where.status = status;
     }
 
     if (search) {
