@@ -198,10 +198,10 @@ export function IncidentModal({ incident, children }: { incident?: any, children
                 control={form.control}
                 name="reason"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="min-w-0">
                     <FormLabel className="text-gray-700 font-semibold">Motivo *</FormLabel>
                     <FormControl>
-                      <Input placeholder="Digite o motivo..." {...field} className="focus:ring-[#413129]" />
+                      <Input placeholder="Digite o motivo..." {...field} className="focus:ring-[#413129] w-full break-all" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -282,7 +282,7 @@ export function IncidentModal({ incident, children }: { incident?: any, children
               </div>
             )}
 
-            <div className="bg-gray-50 p-4 rounded-md border border-gray-100">
+            <div className="bg-gray-50 p-4 rounded-md border border-gray-100 min-w-0">
               <FormField
                 control={form.control}
                 name="isMachineStopped"
@@ -292,11 +292,11 @@ export function IncidentModal({ incident, children }: { incident?: any, children
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        className="data-[state=checked]:bg-[#413129] data-[state=checked]:border-[#413129]"
+                        className="data-[state=checked]:bg-[#413129] data-[state=checked]:border-[#413129] flex-shrink-0"
                       />
                     </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel className="text-sm font-medium text-gray-900 cursor-pointer">
+                    <div className="space-y-1 leading-none min-w-0">
+                      <FormLabel className="text-sm font-medium text-gray-900 cursor-pointer break-words">
                         A máquina precisou ser parada para este serviço?
                       </FormLabel>
                     </div>
@@ -309,12 +309,12 @@ export function IncidentModal({ incident, children }: { incident?: any, children
               control={form.control}
               name="description"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="min-w-0">
                   <FormLabel className="text-gray-700 font-semibold">Descrição Detalhada *</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Descreva detalhadamente o problema e o serviço que será realizado..."
-                      className="resize-none h-32 focus:ring-[#413129]"
+                      className="resize-none h-32 focus:ring-[#413129] w-full break-all"
                       {...field}
                     />
                   </FormControl>
