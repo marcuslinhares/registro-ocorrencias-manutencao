@@ -16,7 +16,7 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string | undefined>(undefined);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('');
 
   // Debounce search input to avoid too many requests
   useEffect(() => {
@@ -97,12 +97,12 @@ export default function Home() {
                 Planejada
               </button>
 
-              <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || 'all')}>
-                <SelectTrigger className="w-[180px] h-[42px] bg-white border-gray-300 text-gray-700">
+              <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || '')}>
+                <SelectTrigger className="w-[140px] h-[42px] bg-white border-gray-300 text-gray-700 rounded-md">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Status</SelectItem>
+                  <SelectItem value="">Status</SelectItem>
                   <SelectItem value="Em Aberto">Em Aberto</SelectItem>
                   <SelectItem value="Concluido">Concluido</SelectItem>
                 </SelectContent>
@@ -113,7 +113,7 @@ export default function Home() {
           <IncidentTable 
             typeOfOccurrence={typeFilter} 
             search={debouncedSearch} 
-            status={statusFilter === 'all' ? undefined : statusFilter}
+            status={statusFilter === '' ? undefined : statusFilter}
           />
         </div>
       </div>
