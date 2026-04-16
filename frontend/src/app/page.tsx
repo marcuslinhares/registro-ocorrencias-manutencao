@@ -68,7 +68,7 @@ export default function Home() {
             <div className="flex gap-2 items-center">
               <button
                 onClick={() => toggleTypeFilter('Preventiva')}
-                className={`px-4 h-[42px] border rounded-md transition-colors ${
+                className={`px-4 h-[44px] border rounded-md transition-colors ${
                   typeFilter === 'Preventiva'
                     ? 'bg-[#4B5563] text-white border-[#4B5563]'
                     : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
@@ -78,7 +78,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => toggleTypeFilter('Corretiva')}
-                className={`px-4 h-[42px] border rounded-md transition-colors ${
+                className={`px-4 h-[44px] border rounded-md transition-colors ${
                   typeFilter === 'Corretiva'
                     ? 'bg-[#EF4444] text-white border-[#EF4444]'
                     : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
@@ -88,7 +88,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => toggleTypeFilter('Planejada')}
-                className={`px-4 h-[42px] border rounded-md transition-colors ${
+                className={`px-4 h-[44px] border rounded-md transition-colors ${
                   typeFilter === 'Planejada'
                     ? 'bg-[#3B82F6] text-white border-[#3B82F6]'
                     : 'bg-white border-gray-300 hover:bg-gray-50 text-gray-700'
@@ -98,7 +98,7 @@ export default function Home() {
               </button>
 
               <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || '')}>
-                <SelectTrigger className="w-[140px] h-[42px] bg-white border-gray-300 text-gray-700 rounded-md shadow-none focus:ring-0">
+                <SelectTrigger className="w-[140px] h-[44px] bg-white border-gray-300 text-gray-700 rounded-md shadow-none focus:ring-0 flex-shrink-0">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
